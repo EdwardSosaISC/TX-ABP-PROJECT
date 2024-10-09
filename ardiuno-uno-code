@@ -1,0 +1,100 @@
+const int buttonPin3 = 4;   // Botón para LED rojo
+const int ledPin2 = 3;      // LED rojo
+const int buttonPin13 = 13; // Botón para LED verde
+const int ledPin12 = 12;    // LED verde
+const String ID = "PLACA-2"; // ID de la placa
+
+void setup() {
+  pinMode(buttonPin3, INPUT);
+  pinMode(ledPin2, OUTPUT);
+  pinMode(buttonPin13, INPUT);
+  pinMode(ledPin12, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Manejo del botón para el LED rojo
+  if (digitalRead(buttonPin3) == HIGH) {
+    Serial.print("#");                // Carácter de inicio
+    Serial.print(ID);                // ID de la placa
+    Serial.print(" ENVIADO RED ");   // Mensaje de envío para LED rojo
+    Serial.print("*");                // Carácter de fin
+    Serial.println();                 // Nueva línea para claridad
+
+    digitalWrite(ledPin2, HIGH);     // Enciende el LED rojo
+    delay(250);                      // Mantener encendido durante 500 ms
+    digitalWrite(ledPin2, LOW);      // Apagar el LED rojo
+
+    // Encender y apagar todos los LEDs después de apagar el LED que se usó
+    digitalWrite(ledPin2, HIGH);      // Encender LED rojo
+    digitalWrite(ledPin12, HIGH);     // Encender LED verde
+    delay(250);                       // Mantener encendidos durante 500 ms
+    digitalWrite(ledPin2, LOW);       // Apagar LED rojo
+    digitalWrite(ledPin12, LOW);      // Apagar LED verde
+  }
+  
+  // Manejo del botón para el LED verde
+  if (digitalRead(buttonPin13) == HIGH) {
+    Serial.print("#");                // Carácter de inicio
+    Serial.print(ID);                // ID de la placa
+    Serial.print(" ENVIADO GREEN ");  // Mensaje de envío para LED verde
+    Serial.print("*");                // Carácter de fin
+    Serial.println();                 // Nueva línea para claridad
+
+    digitalWrite(ledPin12, HIGH);    // Enciende el LED verde
+    delay(250);                      // Mantener encendido durante 500 ms
+    digitalWrite(ledPin12, LOW);      // Apagar el LED verde
+
+    // Encender y apagar todos los LEDs después de apagar el LED que se usó
+    digitalWrite(ledPin2, HIGH);      // Encender LED rojo
+    digitalWrite(ledPin12, HIGH);     // Encender LED verde
+    delay(250);                       // Mantener encendidos durante 500 ms
+    digitalWrite(ledPin2, LOW);       // Apagar LED rojo
+    digitalWrite(ledPin12, LOW);      // Apagar LED verde
+  }
+  
+  // Comprobación de datos disponibles en la serie
+  if (Serial.available()) {
+    String received = Serial.readStringUntil('*'); // Leer hasta el carácter de fin
+    
+    if (received.startsWith("#")) { // Si recibe un mensaje
+      Serial.println("Mensaje recibido: " + received); // Mostrar el mensaje completo
+      // Procesar el mensaje
+      if (received.indexOf("RED") != -1) { // Si contiene "RED"
+        digitalWrite(ledPin2, HIGH);  // Encender LED rojo
+        delay(250);                   // Mantener encendido durante 500 ms
+        digitalWrite(ledPin2, LOW);   // Apagar LED rojo
+
+        // Encender y apagar todos los LEDs después de apagar el LED que se usó
+        digitalWrite(ledPin2, HIGH);   // Encender LED rojo
+        digitalWrite(ledPin12, HIGH);  // Encender LED verde
+        delay(250);                    // Mantener encendidos durante 500 ms
+        digitalWrite(ledPin2, LOW);    // Apagar LED rojo
+        digitalWrite(ledPin12, LOW);   // Apagar LED verde
+
+        Serial.print("#");              // Carácter de inicio
+        Serial.print(ID);              // ID de la placa
+        Serial.print(" RECIBIDO RED "); // Mensaje de recepción para LED rojo
+        Serial.print("*");              // Carácter de fin
+        Serial.println();               // Nueva línea para claridad
+      } else if (received.indexOf("GREEN") != -1) { // Si contiene "GREEN"
+        digitalWrite(ledPin12, HIGH);  // Encender LED verde
+        delay(250);                    // Mantener encendido durante 500 ms
+        digitalWrite(ledPin12, LOW);   // Apagar LED verde
+
+        // Encender y apagar todos los LEDs después de apagar el LED que se usó
+        digitalWrite(ledPin2, HIGH);   // Encender LED rojo
+        digitalWrite(ledPin12, HIGH);  // Encender LED verde
+        delay(250);                    // Mantener encendidos durante 500 ms
+        digitalWrite(ledPin2, LOW);    // Apagar LED rojo
+        digitalWrite(ledPin12, LOW);   // Apagar LED verde
+
+        Serial.print("#");              // Carácter de inicio
+        Serial.print(ID);              // ID de la placa
+        Serial.print(" RECIBIDO GREEN "); // Mensaje de recepción para LED verde
+        Serial.print("*");              // Carácter de fin
+        Serial.println();               // Nueva línea para claridad
+      }
+    }
+  }
+}
